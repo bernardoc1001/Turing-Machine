@@ -8,6 +8,7 @@ type Tape = (String, Int)
 type Configuration = (Int, Tape)
 
 data Action = L | R | Y | N
+              deriving Eq
 
 -- input (Int,Char) pair gives the current state and the current tape symbol, and the output (Int,Char,Action)triple gives the new state, new tape symbol and resulting action
 type Transitions = (Int, Char) -> (Int, Char, Action)
@@ -17,11 +18,23 @@ data Result = Accept Tape | Reject Tape
 
 --run :: Configuration -> Transitions -> Result
 
+
 -- Helper functions
 getTapeChar :: Tape -> Char
 getTapeChar (xs , index) = xs !! index
 
+moveTapeHead :: Tape -> Action -> Tape
+moveTapeHead (xs, index) a
+  |a == L    = (xs, (index -1))
+  |a == R    = (xs, (index + 1))
+  |otherwise = error "A move action was expected, received a result Action"
 
+giveResult :: Tape -> Action -> Result
+giveResult t a
+  |a == Y    = Accept t
+  |a == N    = Reject t
+  |otherwise = error "A result action was expected, received a move Action"
+  
 setTapeChar :: Tape -> Char -> Tape
 setTapeChar ([], _) _ = error "Tape can't be completly Empty"
 setTapeChar (_, 0) _ = error "Can't overwrite left delimiter"
@@ -35,3 +48,4 @@ replaceNthElem [] index c
 replaceNthElem (x:xs) index c
   |index == 0 = c:xs
   |otherwise  = x : replaceNthElem xs (index - 1) c
+
