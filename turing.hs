@@ -16,12 +16,27 @@ type Transitions = (Int, Char) -> (Int, Char, Action)
 data Result = Accept Tape | Reject Tape
               deriving Show
 
---run :: Configuration -> Transitions -> Result
 
+{-
+run :: Configuration -> Transitions -> Result
+run (s,t) (state,c)
+  | a == L || a == R =
+    let updatedTape = moveTapeHead (setTapeChar t c) a
+    in run (state, updatedTape) (state, getTapeChar updatedTape) 
+  | otherwise        = giveResult t a
+    where a = getAction (state,c)
+-}
 
 -- Helper functions
 getTapeChar :: Tape -> Char
 getTapeChar (xs , index) = xs !! index
+
+getAction :: (t1, t2, Action) -> Action
+getAction t = thirdTupleElem t
+
+
+thirdTupleElem :: (t1, t2, t3) -> t3
+thirdTupleElem (_,_,x) = x
 
 moveTapeHead :: Tape -> Action -> Tape
 moveTapeHead (xs, index) a
