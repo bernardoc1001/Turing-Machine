@@ -111,6 +111,7 @@ palindrome(s,c) = case (s,c) of
                     (0,'a') -> (1,'X',R) --STATE 1 = Found A at start
                     (0,'b') -> (2,'Y',R) --STATE 2 = Found B at start
 
+                    --A Search
                     --Search for end of remaining input after finding an A
                     (1,'a') -> (1,'a',R)
                     (1,'b') -> (1,'b',R)
@@ -119,7 +120,31 @@ palindrome(s,c) = case (s,c) of
                     (1,'Y') -> (3,'Y',L) --Found end, move left 1
 
                     --Check if character is an A
-                    (3,'a') ->
+                    (3,'a') -> (4,'X',L) --Found A, replace with X and search for the start
+                    (3,'b') -> (3,'b',N) --Found B, reject
+                    (3,'X') -> (3,'X',Y) --Accept the case for a single A input
+                    (3,'Y') -> (3,'Y',N) --Something weird has happened, reject (double check if this is needed)
+
+                    -- Multipurpose search for start
+                    --Searching for start of remaining input
+                    (4,'a') -> (4,'a',L) --Keep Looking
+                    (4,'b') -> (4,'a',L) --Keep Looking
+                    (4,'X') -> (0,'X',R) --Found Start, start checking the next letter
+                    (4,'Y') -> (0,'Y',R) --Found Start, start checking the next letter
+
+                    -- B Search
+                    --Search for end of remaining input after finding a B
+                    (2,'a') -> (2,'a',R)
+                    (2,'b') -> (2,'b',R)
+                    (2,' ') -> (5,' ',L) --Found end, move left 1
+                    (2,'X') -> (5,'X',L) --Found end, move left 1
+                    (2,'Y') -> (5,'Y',L) --Found end, move left 1
+
+                    --Check if character is a B
+                    (5,'b') -> (4,'Y',L) --Found B, replace with Y and search for the start
+                    (5,'a') -> (5,'a',N) --Found A, reject
+                    (5,'Y') -> (5,'Y',Y) --Accept the case for a single B input
+                    (5,'X') -> (5,'X',N) --Something weird has happened, reject (double check if this is needed)
                     
                     _      -> error "No Valid Transition"
 
