@@ -1,16 +1,12 @@
 -- Section 1
 
--- String gives the tape contents, and the Int gives the current position of the read-write head on the tape
 type Tape = (String, Int)
 
-
--- Int is the current state (this should be the initial state for the starting configuration), and the Tape is the current value of the tape. 
 type Configuration = (Int, Tape)
 
 data Action = L | R | Y | N
               deriving (Eq, Show)
 
--- input (Int,Char) pair gives the current state and the current tape symbol, and the output (Int,Char,Action)triple gives the new state, new tape symbol and resulting action
 type Transitions = (Int, Char) -> (Int, Char, Action)
 
 data Result = Accept Tape | Reject Tape
@@ -74,7 +70,8 @@ replaceNthElem (x:xs) index c
 
 
 
--- RULES
+--------------------- RULES -----------------------------------------
+-- Q2
 anbncn (s,c) = case (s,c) of
                   (0,' ') -> (0,' ',Y)
                   (0,'a') -> (1,'X',R)
@@ -105,3 +102,24 @@ anbncn (s,c) = case (s,c) of
                   (3,'Y') -> (3,'Y',L)
                   (3,'Z') -> (3,'Z',L)
                   _       -> error "No valid transition"
+
+-- Q3
+palindrome(s,c) = case (s,c) of
+                    (0,' ') -> (0,' ',Y) --Completed Successfully
+                    (0,'X') -> (0,'X',Y) --Completed Successfully
+                    (0,'Y') -> (0,'Y',Y) --Completed Successfully
+                    (0,'a') -> (1,'X',R) --STATE 1 = Found A at start
+                    (0,'b') -> (2,'Y',R) --STATE 2 = Found B at start
+
+                    --Search for end of remaining input after finding an A
+                    (1,'a') -> (1,'a',R)
+                    (1,'b') -> (1,'b',R)
+                    (1,' ') -> (3,' ',L) --Found end, move left 1
+                    (1,'X') -> (3,'X',L) --Found end, move left 1
+                    (1,'Y') -> (3,'Y',L) --Found end, move left 1
+
+                    --Check if character is an A
+                    (3,'a') ->
+                    
+                    _      -> error "No Valid Transition"
+
