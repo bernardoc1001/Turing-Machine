@@ -1,16 +1,12 @@
 -- Section 1
 
--- String gives the tape contents, and the Int gives the current position of the read-write head on the tape
 type Tape = (String, Int)
 
-
--- Int is the current state (this should be the initial state for the starting configuration), and the Tape is the current value of the tape. 
 type Configuration = (Int, Tape)
 
 data Action = L | R | Y | N
               deriving (Eq, Show)
 
--- input (Int,Char) pair gives the current state and the current tape symbol, and the output (Int,Char,Action)triple gives the new state, new tape symbol and resulting action
 type Transitions = (Int, Char) -> (Int, Char, Action)
 
 data Result = Accept Tape | Reject Tape
@@ -74,7 +70,8 @@ replaceNthElem (x:xs) index c
 
 
 
--- RULES
+--------------------- RULES -----------------------------------------
+-- Q2
 anbncn (s,c) = case (s,c) of
                   (0,' ') -> (0,' ',Y)
                   (0,'a') -> (1,'X',R)
@@ -105,3 +102,49 @@ anbncn (s,c) = case (s,c) of
                   (3,'Y') -> (3,'Y',L)
                   (3,'Z') -> (3,'Z',L)
                   _       -> error "No valid transition"
+
+-- Q3
+palindrome(s,c) = case (s,c) of
+                    (0,' ') -> (0,' ',Y) --Completed Successfully
+                    (0,'X') -> (0,'X',Y) --Completed Successfully
+                    (0,'Y') -> (0,'Y',Y) --Completed Successfully
+                    (0,'a') -> (1,'X',R) --STATE 1 = Found A at start
+                    (0,'b') -> (2,'Y',R) --STATE 2 = Found B at start
+
+                    --A Search
+                    --Search for end of remaining input after finding an A
+                    (1,'a') -> (1,'a',R)
+                    (1,'b') -> (1,'b',R)
+                    (1,' ') -> (3,' ',L) --Found end, move left 1
+                    (1,'X') -> (3,'X',L) --Found end, move left 1
+                    (1,'Y') -> (3,'Y',L) --Found end, move left 1
+
+                    --Check if character is an A
+                    (3,'a') -> (4,'X',L) --Found A, replace with X and search for the start
+                    (3,'b') -> (3,'b',N) --Found B, reject
+                    (3,'X') -> (3,'X',Y) --Accept the case for a single A input
+                    (3,'Y') -> (3,'Y',N) --Something weird has happened, reject (double check if this is needed)
+
+                    -- Multipurpose search for start
+                    --Searching for start of remaining input
+                    (4,'a') -> (4,'a',L) --Keep Looking
+                    (4,'b') -> (4,'a',L) --Keep Looking
+                    (4,'X') -> (0,'X',R) --Found Start, start checking the next letter
+                    (4,'Y') -> (0,'Y',R) --Found Start, start checking the next letter
+
+                    -- B Search
+                    --Search for end of remaining input after finding a B
+                    (2,'a') -> (2,'a',R)
+                    (2,'b') -> (2,'b',R)
+                    (2,' ') -> (5,' ',L) --Found end, move left 1
+                    (2,'X') -> (5,'X',L) --Found end, move left 1
+                    (2,'Y') -> (5,'Y',L) --Found end, move left 1
+
+                    --Check if character is a B
+                    (5,'b') -> (4,'Y',L) --Found B, replace with Y and search for the start
+                    (5,'a') -> (5,'a',N) --Found A, reject
+                    (5,'Y') -> (5,'Y',Y) --Accept the case for a single B input
+                    (5,'X') -> (5,'X',N) --Something weird has happened, reject (double check if this is needed)
+                    
+                    _      -> error "No Valid Transition"
+
