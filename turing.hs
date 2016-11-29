@@ -123,12 +123,11 @@ palindrome(s,c) = case (s,c) of
                     (3,'a') -> (4,'X',L) --Found A, replace with X and search for the start
                     (3,'b') -> (3,'b',N) --Found B, reject
                     (3,'X') -> (3,'X',Y) --Accept the case for a single A input
-                    (3,'Y') -> (3,'Y',N) --Something weird has happened, reject (double check if this is needed)
-
+                    
                     -- Multipurpose search for start
                     --Searching for start of remaining input
                     (4,'a') -> (4,'a',L) --Keep Looking
-                    (4,'b') -> (4,'a',L) --Keep Looking
+                    (4,'b') -> (4,'b',L) --Keep Looking
                     (4,'X') -> (0,'X',R) --Found Start, start checking the next letter
                     (4,'Y') -> (0,'Y',R) --Found Start, start checking the next letter
 
@@ -144,7 +143,6 @@ palindrome(s,c) = case (s,c) of
                     (5,'b') -> (4,'Y',L) --Found B, replace with Y and search for the start
                     (5,'a') -> (5,'a',N) --Found A, reject
                     (5,'Y') -> (5,'Y',Y) --Accept the case for a single B input
-                    (5,'X') -> (5,'X',N) --Something weird has happened, reject (double check if this is needed)
                     _      -> error "No Valid Transition"
 
 
